@@ -1,0 +1,14 @@
+Name~|~Test User
+Payment Due Date~|~11/02/2026
+Statement Date~|~22/01/2026
+
+Card No: 4111 11XX XXXX 4521
+
+Domestic / International Transactions
+Transaction type~|~Primary / Addon Customer Name~|~DATE~|~Description~|~AMT~|~Debit /Credit~|~REWARDS~|~
+Domestic~|~Test User ~|~10/01/2026 12:00:00~|~COFFEE SHOP BANGALORE ~|~250.00~|~~|~~|~
+Domestic~|~Test User ~|~11/01/2026 13:00:00~|~CREDIT CARD PAYMENT Net Banking (Ref# 1)~|~500.00~|~Cr~|~~|~
+Domestic~|~Test User ~|~12/01/2026 14:00:00~|~UPI-GROCERY STORE ~|~910.00~|~~|~~|~
+
+Reward Points Summary
+Opening Balance~|~0
