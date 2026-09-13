@@ -85,6 +85,8 @@ spend_analyzer/
 
 **HDFC CSV:** Tilde-delimited (`~|~`). One card per file; match registered last 4 to `Card No:` line (Visa and UPI cards share layout). Use `DATE`, `Description`, `AMT`, `Debit /Credit`. Skip `Cr` rows and `CREDIT CARD PAYMENT` lines — do not ingest. UPI spends keep the `UPI-` merchant prefix in description.
 
+**Axis Excel:** Sheet **Transactions Summary** (`.xlsx` / `.xls`). Match registered last 4 to **Credit Card Number** in the statement header. Use `Date`, `Transaction Details`, `Amount (INR)`, `Debit/Credit`. Skip **`Debit/Credit = Credit`** rows and any description containing **`MB PAYMENT`** (card payments) — do not ingest. Merchant refunds with **` REFUND`** in the description use **Refund** (excluded from dashboard spend).
+
 ### Parsing & normalization
 
 * Map raw headers (transaction date, description, amount / debit-credit flags) to the master schema.

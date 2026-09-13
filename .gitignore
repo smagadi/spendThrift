@@ -18,9 +18,11 @@ data/*.duckdb
 data/*.duckdb.wal
 !data/.gitkeep
 
-# Bank statement exports (PII — never commit)
+# Bank statement exports (PII — never commit; entire folder tree)
 bankstatements*/
 bankstatements */
+**/bankstatements*/
+**/bankstatements */
 
 # Local backups
 backups/

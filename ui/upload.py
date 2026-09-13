@@ -46,8 +46,8 @@ def render(api: SpendAPI) -> None:
     card = next(c for c in active if c["card_id"] == card_id)
     bank = card["bank_name"].upper()
 
-    if bank not in {"ICICI", "HDFC"}:
-        st.warning("Only ICICI and HDFC CSV ingest are available. Axis parser comes next.")
+    if bank not in {"ICICI", "HDFC", "AXIS"}:
+        st.warning("Only ICICI, HDFC, and Axis statement import are supported.")
         return
 
     if bank == "ICICI":
@@ -55,8 +55,14 @@ def render(api: SpendAPI) -> None:
             "ICICI CSV under Transaction Details. Use the last 4 from the masked card line "
             "(e.g. XXXX5678), or billing Accountno last 4 — spend rows are picked automatically."
         )
+    elif bank == "AXIS":
+        st.caption(
+            "Axis Excel (Transactions Summary). Match registered last 4 to Credit Card Number "
+            "in the statement. MB PAYMENT and credit rows are skipped."
+        )
 
-    uploaded = st.file_uploader("Statement file", type=["csv"])
+    upload_types = ["csv"] if bank in {"ICICI", "HDFC"} else ["xlsx", "xls"]
+    uploaded = st.file_uploader("Statement file", type=upload_types)
     if uploaded and bank == "ICICI":
         data = uploaded.getvalue()
         summary = icici_statement_summary(data)
@@ -72,8 +78,10 @@ def render(api: SpendAPI) -> None:
         try:
             if bank == "ICICI":
                 result = api.ingest_icici_csv(card_id, uploaded.name, uploaded.getvalue())
-            else:
+            elif bank == "HDFC":
                 result = api.ingest_hdfc_csv(card_id, uploaded.name, uploaded.getvalue())
+            else:
+                result = api.ingest_axis_xls(card_id, uploaded.name, uploaded.getvalue())
             st.session_state.ingest_notice = {
                 "status": result.status,
                 "row_count": result.row_count,

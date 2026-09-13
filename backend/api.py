@@ -11,6 +11,7 @@ from backend.cards import get_card
 from backend.database import connect
 from backend.errors import ParseError
 from backend.ingest import NormalizedTxn
+from backend.parsers.axis import parse_axis_xls_detail
 from backend.parsers.hdfc import parse_hdfc_csv_detail
 from backend.parsers.icici import parse_icici_csv_detail
 
@@ -81,6 +82,24 @@ class SpendAPI:
         if card["bank_name"].upper() != "HDFC":
             raise ParseError("ingest_hdfc_csv is only for HDFC cards")
         parsed = parse_hdfc_csv_detail(file_bytes, last_4_digits=card["last_4_digits"])
+        result = self.ingest_normalized(
+            card_id, filename, file_bytes, parsed.rows, statement_period=statement_period
+        )
+        if parsed.note:
+            result.message = f"{result.message}. {parsed.note}"
+        return result
+
+    def ingest_axis_xls(
+        self,
+        card_id: str,
+        filename: str,
+        file_bytes: bytes,
+        statement_period: str | None = None,
+    ):
+        card = get_card(self.conn, card_id)
+        if card["bank_name"].upper() != "AXIS":
+            raise ParseError("ingest_axis_xls is only for Axis cards")
+        parsed = parse_axis_xls_detail(file_bytes, last_4_digits=card["last_4_digits"])
         result = self.ingest_normalized(
             card_id, filename, file_bytes, parsed.rows, statement_period=statement_period
         )

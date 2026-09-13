@@ -70,3 +70,16 @@ def is_hdfc_non_expense_row(description: str, debit_credit: str) -> bool:
 def is_hdfc_merchant_refund(description: str) -> bool:
     upper = description.upper()
     return " REFUND" in upper or upper.endswith(" REFUND")
+
+
+def is_axis_non_expense_row(description: str, debit_credit: str) -> bool:
+    """Skip Axis card payments (MB PAYMENT) and billing credits. Not merchant spend."""
+    if debit_credit.strip().lower() in ("cr", "credit"):
+        return True
+    upper = description.upper()
+    return "MB PAYMENT" in upper
+
+
+def is_axis_merchant_refund(description: str) -> bool:
+    upper = description.upper()
+    return " REFUND" in upper or upper.endswith(" REFUND")

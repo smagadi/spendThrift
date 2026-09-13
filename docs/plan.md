@@ -92,12 +92,13 @@ Suggested modules:
 
 ### Work
 
-* User samples live under `bankstatements /` (gitignored). Phase 3: **ICICI CSV** (`backend/parsers/icici.py`) and **HDFC CSV** (`backend/parsers/hdfc.py`). Axis is a separate module later.
+* User samples live under `bankstatements /` (gitignored). Phase 3: **ICICI CSV** (`backend/parsers/icici.py`), **HDFC CSV** (`backend/parsers/hdfc.py`), and **Axis Excel** (`backend/parsers/axis.py`).
 * ICICI CSV: use Date, Transaction Details, Amount(in Rs), BillingAmountSign. Do **not** read Customer Name, Address, Account number, Reward Point Header, Intl.Amount, There, Sr.No.
 * HDFC CSV: `~|~` delimiter; one card per file via `Card No:` last 4; use DATE, Description, AMT, Debit /Credit. Skip Cr and card payment lines. Visa and UPI statements share the same layout.
+* Axis Excel: **Transactions Summary** sheet; last 4 from **Credit Card Number** header; Date, Transaction Details, Amount (INR), Debit/Credit. Skip Credit rows and **MB PAYMENT** descriptions.
 * `BillingAmountSign` **CR** = credit (payments, fuel surcharge give-back, refunds) → `spend_type=Credit`, excluded from dashboard totals. Blank/DR = expense.
 * ICICI: one card per statement file; consistent CSV layout. Discover masked-line last-4 from the file; match registered card. No hardcoded card numbers.
-* `SpendAPI.ingest_icici_csv` / `SpendAPI.ingest_hdfc_csv` → parse → existing ingest (hash / reject / replace).
+* `SpendAPI.ingest_icici_csv` / `ingest_hdfc_csv` / `ingest_axis_xls` → parse → existing ingest (hash / reject / replace).
 
 ### Done when
 
@@ -115,7 +116,7 @@ Suggested modules:
 
 1. **Dashboard** — global filters: year, user (All / cardholder), card (All / any card including soft-deleted). Unidentified count badge. Sections from PRD §6: metrics, MoM, top spends/merchants, category donut + by card/user, recurring table, advisory text.
 2. **Card manager** — create; list; soft-delete; reactivate.
-**Upload (current):** ICICI and HDFC CSV via `SpendAPI.ingest_icici_csv` / `ingest_hdfc_csv`. Axis parser is after this UI.
+**Upload (current):** ICICI and HDFC CSV; Axis Excel via `ingest_icici_csv` / `ingest_hdfc_csv` / `ingest_axis_xls`.
 4. **Category review** — Unidentified table, dropdowns, one **Save mappings**; recategorize + apply to existing (can live here or under settings).
 5. **Search / settings** — filters + results table; backup path.
 
@@ -137,7 +138,8 @@ Suggested modules:
 | 5 | 2 | Analytics, recurring, advisory, search, backup |
 | 6 | 3 | ICICI CSV parser + ingest |
 | 7 | 3 | HDFC CSV parser + ingest (Visa + UPI) |
-| 8 | 4 | Streamlit UI (this phase; Axis after UI) |
+| 8 | 3 | Axis Excel parser + ingest |
+| 9 | 4 | Streamlit UI (this phase) |
 
 Phases 1–2 do not wait on bank samples. Phase 3 does.
 
